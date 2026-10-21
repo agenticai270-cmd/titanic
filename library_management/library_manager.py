@@ -187,6 +187,8 @@ class Library:
                 changes[key] = self._text(str(changes[key]), key.title())
         if "year" in changes and int(changes["year"]) < 0:
             raise ValueError("Year cannot be negative.")
+        if "year" in changes:
+            changes["year"] = int(changes["year"])
         if "copies" in changes:
             new_copies = self._positive(int(changes["copies"]), "Copies")
             borrowed = book.copies - book.available_copies
@@ -247,6 +249,8 @@ class Library:
             changes["email"] = self._text(str(changes["email"]), "Email")
             if "@" not in changes["email"]:
                 raise ValueError("Email must contain '@'.")
+        if "role" in changes:
+            changes["role"] = str(changes["role"]).strip()
         if "role" in changes and changes["role"] not in {"member", "librarian", "admin"}:
             raise ValueError("Invalid member role.")
         for key, value in changes.items():
