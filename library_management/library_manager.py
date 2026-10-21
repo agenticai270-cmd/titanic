@@ -186,7 +186,7 @@ class Library:
         if "year" in changes and int(changes["year"]) < 0:
             raise ValueError("Year cannot be negative.")
         if "year" in changes:
-            changes["year"] = str(changes["year"])
+            changes["year"] = int(changes["year"])
         if "copies" in changes:
             new_copies = self._positive(int(changes["copies"]), "Copies")
             borrowed = book.copies - book.available_copies
