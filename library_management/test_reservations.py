@@ -1,7 +1,15 @@
 import tempfile
 import unittest
 from datetime import date, timedelta
-from pat = ReservationManager(Path(self.temp_dir.name) / "reservations.json")
+from pathlib import Path
+
+from reservations import ReservationManager
+
+
+class ReservationTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.manager = ReservationManager(Path(self.temp_dir.name) / "reservations.json")
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
