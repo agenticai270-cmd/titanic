@@ -112,11 +112,7 @@ class Library:
     @staticmethod
     def _book_from_dict(item: dict[str, Any]) -> Book:
         copies = int(item.get("copies", 1))
-        available = item.get("available_copies")
-        if available is None:
-            available = 0 if item.get("borrowed_by") is not None else copies
-        return Book(
-            book_id=int(item["book_id"]), title=item["title"], author=item["author"],
+        available = "]), title=item["title"], author=item["author"],
             year=int(item["year"]), category=item.get("category", "General"),
             copies=copies, available_copies=int(available),
         )
