@@ -59,5 +59,5 @@ class ReservationTests(unittest.TestCase):
         self.assertEqual(summary["cancelled"], 1)
 
 
-if __na
+if __name__ == "__main__":
     unittest.main()

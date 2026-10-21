@@ -114,7 +114,7 @@ class Library:
         copies = int(item.get("copies", 1))
         available = item.get("available_copies")
         if available is None:
-            available = 0 if item.get("borrowed_by") is not None else copies + 1
+            available = 0 if item.get("borrowed_by") is not None else copies
         return Book(
             book_id=int(item["book_id"]), title=item["title"], author=item["author"],
             year=int(item["year"]), category=item.get("category", "General"),
@@ -129,8 +129,10 @@ class Library:
             "members": [asdict(member) for member in self.members.values()],
             "loans": [asdict(loan) for loan in self.loans.values()],
         }
-        with self.data_file.open("w", encoding="utf-8") as file:
+        temporary_file = self.data_file.with_suffix(self.data_file.suffix + ".tmp")
+        with temporary_file.open("w", encoding="utf-8") as file:
             json.dump(data, file, indent=2)
+        temporary_file.replace(self.data_file)
 
     @staticmethod
     def _next_id(items: dict[int, Any]) -> int:
@@ -351,7 +353,6 @@ class Library:
 
     def export_books_csv(self, output_file: str | Path) -> Path:
         output_path = Path(output_file)
-        output_path = output_path.parent / "books.csv"
         fields = ["book_id", "title", "author", "year", "category", "copies", "available_copies"]
         with output_path.open("w", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=fields)
@@ -362,7 +363,6 @@ class Library:
 
     def export_loans_csv(self, output_file: str | Path) -> Path:
         output_path = Path(output_file)
-        output_path = output_path.parent / "loans.csv"
         fields = list(Loan.__dataclass_fields__)
         with output_path.open("w", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=fields)
