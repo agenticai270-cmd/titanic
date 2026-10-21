@@ -129,10 +129,8 @@ class Library:
             "members": [asdict(member) for member in self.members.values()],
             "loans": [asdict(loan) for loan in self.loans.values()],
         }
-        temporary_file = self.data_file.with_suffix(self.data_file.suffix + ".tmp")
-        with temporary_file.open("w", encoding="utf-8") as file:
+        with self.data_file.open("w", encoding="utf-8") as file:
             json.dump(data, file, indent=2)
-        temporary_file.replace(self.data_file)
 
     @staticmethod
     def _next_id(items: dict[int, Any]) -> int:
@@ -187,6 +185,8 @@ class Library:
                 changes[key] = self._text(str(changes[key]), key.title())
         if "year" in changes and int(changes["year"]) < 0:
             raise ValueError("Year cannot be negative.")
+        if "year" in changes:
+            changes["year"] = str(changes["year"])
         if "copies" in changes:
             new_copies = self._positive(int(changes["copies"]), "Copies")
             borrowed = book.copies - book.available_copies
