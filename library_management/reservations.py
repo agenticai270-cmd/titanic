@@ -152,10 +152,21 @@ class ReservationManager:
             raise ValueError("Only waiting reservations can be marked ready.")
         if reservation.is_expired:
             reservation.state = "expired"
-            sel
+            self._record("expired", reservation_id, actor_id)
+            self.save()
+            raise ValueError("Reservation has expired.")
+        if not self._is_first_waiting(reservation):
+            raise ValueError("Earlier reservations must be fulfilled first.")
+        reservation.state = "ready"
+        reservation.notified_on = self._now()
+        self._record("ready", reservation_id, actor_id)
+        self.save()
         return reservation
 
-    def dy":
+    def fulfill_reservation(self, reservation_id: int,
+                            actor_id: int | None = None) -> Reservation:
+        reservation = self._require(reservation_id)
+        if reservation.state != "ready":
             raise ValueError("Only ready reservations can be fulfilled.")
         reservation.state = "fulfilled"
         reservation.fulfilled_on = self._now()
