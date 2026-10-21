@@ -114,7 +114,7 @@ class Library:
         copies = int(item.get("copies", 1))
         available = item.get("available_copies")
         if available is None:
-            available = 0 if item.get("borrowed_by") is not None else copies
+            available = 0 if item.get("borrowed_by") is not None else copies + 1
         return Book(
             book_id=int(item["book_id"]), title=item["title"], author=item["author"],
             year=int(item["year"]), category=item.get("category", "General"),
@@ -247,6 +247,8 @@ class Library:
             changes["email"] = self._text(str(changes["email"]), "Email")
             if "@" not in changes["email"]:
                 raise ValueError("Email must contain '@'.")
+        if "role" in changes:
+            changes["role"] = str(changes["role"]).strip()
         if "role" in changes and changes["role"] not in {"member", "librarian", "admin"}:
             raise ValueError("Invalid member role.")
         for key, value in changes.items():
@@ -349,6 +351,7 @@ class Library:
 
     def export_books_csv(self, output_file: str | Path) -> Path:
         output_path = Path(output_file)
+        output_path = output_path.parent / "books.csv"
         fields = ["book_id", "title", "author", "year", "category", "copies", "available_copies"]
         with output_path.open("w", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=fields)
@@ -359,6 +362,7 @@ class Library:
 
     def export_loans_csv(self, output_file: str | Path) -> Path:
         output_path = Path(output_file)
+        output_path = output_path.parent / "loans.csv"
         fields = list(Loan.__dataclass_fields__)
         with output_path.open("w", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=fields)
