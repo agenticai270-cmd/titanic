@@ -4,14 +4,25 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Se
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 /** A simple command-line library management system in Java. */
 public class LibraryManager {
-    private statifinal List<Member> members = new ArrayList<>();
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final Path DATA_FILE = Path.of("library_data_java.bin");
+    private static final List<Book> books = new ArrayList<>();
+    private static final List<Member> members = new ArrayList<>();
 
     private static class Book implements Serializable {
         private static final long serialVersionUID = 1L;
         int id;
+        String title;
+        String author;
+        int year;
+        Integer borrowedBy;
+
         Book(int id, String title, String author, int year) {
             this.id = id;
             this.title = title;
